@@ -7,7 +7,9 @@ execute:
   cache: false
   freeze: false
 ---
-'''{python}
+
+```{python}
+#| output: false
 import numpy as np
 import pandas as pd
 import plotly.express as px
@@ -15,14 +17,10 @@ import plotly.io as pio
 import json
 import requests
 import pickle
-'''
 
-'''{python}
 pd.options.plotting.backend = "plotly"
 pio.templates.default = "plotly_white"
-'''
 
-'''{python}
 df = pd.read_csv("https://raw.githubusercontent.com/guebin/DV2023/main/posts/NYCTaxi.csv").assign(
     log_trip_duration = lambda df: np.log(df.trip_duration),
     pickup_datetime = lambda df: df.pickup_datetime.apply(pd.to_datetime),
@@ -37,12 +35,11 @@ df = pd.read_csv("https://raw.githubusercontent.com/guebin/DV2023/main/posts/NYC
     dayofweek = lambda df: df.pickup_datetime.dt.dayofweek
 )
 df_small = df[::100].reset_index(drop=True)
-'''
 
-##| title: 요일,시간에 따른 평균속력 시각화 
 
-'''{python}
 
+
+# 1-(1),(2),(3) 
 
 dayofweek_mapping = {0: '월', 1: '화', 2: '수', 3: '목', 4: '금', 5: '토', 6: '일'}
 df['dayofweek'] = df['dayofweek'].map(dayofweek_mapping)
@@ -51,7 +48,7 @@ df['dayofweek'] = df['dayofweek'].map(dayofweek_mapping)
 average_speed_data = df.groupby(['dayofweek', 'pickup_hour'])['speed'].mean().reset_index()
 
 
-fig = px.density_heatmap(
+fig1= px.density_heatmap(
     data_frame=average_speed_data,
     x='pickup_hour',
     y='dayofweek',
@@ -65,31 +62,11 @@ fig = px.density_heatmap(
 )
 
 
-fig.show()
-'''
-##| title: 요일,시간에 따른 평균이동거리 시각화  
-'''{python}
-
-df = pd.read_csv("https://raw.githubusercontent.com/guebin/DV2023/main/posts/NYCTaxi.csv").assign(
-    log_trip_duration=lambda df: np.log(df.trip_duration),
-    pickup_datetime=lambda df: pd.to_datetime(df.pickup_datetime),
-    dropoff_datetime=lambda df: pd.to_datetime(df.dropoff_datetime),
-    dist=lambda df: np.sqrt((df.pickup_latitude - df.dropoff_latitude) ** 2 + (df.pickup_longitude - df.dropoff_longitude) ** 2),
-    vendor_id=lambda df: df.vendor_id.map({1: 'A', 2: 'B'})
-).assign(
-    pickup_hour=lambda df: df.pickup_datetime.dt.hour,
-    dayofweek=lambda df: df.pickup_datetime.dt.dayofweek
-)
-
-
-dayofweek_mapping = {0: '월', 1: '화', 2: '수', 3: '목', 4: '금', 5: '토', 6: '일'}
-df['dayofweek'] = df['dayofweek'].map(dayofweek_mapping)
-
 
 average_distance_data = df.groupby(['dayofweek', 'pickup_hour'])['dist'].mean().reset_index()
 
 
-fig = px.density_heatmap(
+fig2 = px.density_heatmap(
     data_frame=average_distance_data,
     x='pickup_hour',
     y='dayofweek',
@@ -104,17 +81,11 @@ fig = px.density_heatmap(
 )
 
 
-fig.show()
-'''
-##| title: 속력별 경로 시각화
-'''{python}
-
 df_small['speed_category'] = pd.qcut(df_small['speed'], q=4, labels=['매우느림', '조금느림', '조금빠름', '매우빠름'])
 
 
 zoom_level = 11
-
-fig = px.line_mapbox(
+fig3 = px.line_mapbox(
     data_frame=df_small,
     lat='dropoff_latitude',
     lon='dropoff_longitude',
@@ -141,19 +112,38 @@ scatter_data = px.scatter_mapbox(
 ).data
 
 for sd in scatter_data:
-    fig.add_trace(sd)
+    fig3.add_trace(sd)
 
 
-fig.update_traces(
+fig3.update_traces(
     line={'width': 1},
     opacity=0.8
 )
 
+```
 
-fig.show(config={'scrollZoom': False})# 속력을 quatile에 따라 4개의 구간으로 나누기
-df_small['speed_category'] = pd.qcut(df_small['speed'], q=4, labels=['매우느림', '조금느림', '조금빠름', '매우빠름'])
+# 기말고사1-(1),(2)
+
+```{python}
+#| title: 요일,시간에 따른 평균속력 시각화        
+fig1.show()
+```
+
+```{python}
+#| title: 요일,시간에 따른 평균이동거리 시각화        
+fig2.show()
+```
+
+# 기말고사1-(3)
+
+```{python}
+#| title: 속력별 경로 시각화
+fig3.show(config={'scrollZoom': False})# 속력을 quatile에 따라 4개의 구간으로 나누기
+
+```
 
 
-'''
+
+
 
 
