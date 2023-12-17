@@ -38,18 +38,19 @@ df = pd.read_csv("https://raw.githubusercontent.com/guebin/DV2023/main/posts/NYC
 )
 df_small = df[::100].reset_index(drop=True)
 '''
-'''{python}
-#기말고사 1-(1),(2),(3)
-# | title: 요일,시간에 따른 평균속력 시각화  
 
-# 규칙에 따라 요일 변환
+# 기말고사1-(1),(2)
+
+'''{python}
+
+#| title: 요일,시간에 따른 평균속력 시각화 
 dayofweek_mapping = {0: '월', 1: '화', 2: '수', 3: '목', 4: '금', 5: '토', 6: '일'}
 df['dayofweek'] = df['dayofweek'].map(dayofweek_mapping)
 
-# (요일, 시간)에 따른 평균속력 계산
+
 average_speed_data = df.groupby(['dayofweek', 'pickup_hour'])['speed'].mean().reset_index()
 
-# 대시보드 시각화 (X축 라벨 및 Y축 순서 수정)
+
 fig = px.density_heatmap(
     data_frame=average_speed_data,
     x='pickup_hour',
@@ -63,13 +64,12 @@ fig = px.density_heatmap(
     category_orders={'dayofweek': ['일', '토', '금', '목', '수', '화', '월']}
 )
 
-# 그래프 표시
+
 fig.show()
 '''
 
 '''{python}
-# | title: 요일,시간에 따른 평균이동거리 시각화 
-# 데이터 전처리
+#| title: 요일,시간에 따른 평균이동거리 시각화  
 df = pd.read_csv("https://raw.githubusercontent.com/guebin/DV2023/main/posts/NYCTaxi.csv").assign(
     log_trip_duration=lambda df: np.log(df.trip_duration),
     pickup_datetime=lambda df: pd.to_datetime(df.pickup_datetime),
@@ -81,14 +81,14 @@ df = pd.read_csv("https://raw.githubusercontent.com/guebin/DV2023/main/posts/NYC
     dayofweek=lambda df: df.pickup_datetime.dt.dayofweek
 )
 
-# 규칙에 따라 요일 변환
+
 dayofweek_mapping = {0: '월', 1: '화', 2: '수', 3: '목', 4: '금', 5: '토', 6: '일'}
 df['dayofweek'] = df['dayofweek'].map(dayofweek_mapping)
 
-# (요일, 시간)에 따른 평균 이동거리 계산
+
 average_distance_data = df.groupby(['dayofweek', 'pickup_hour'])['dist'].mean().reset_index()
 
-# 대시보드 시각화 (X축 라벨 및 Y축 순서 수정)
+
 fig = px.density_heatmap(
     data_frame=average_distance_data,
     x='pickup_hour',
@@ -103,19 +103,17 @@ fig = px.density_heatmap(
     color_continuous_scale='Viridis',  # 원하는 색상 스케일로 변경
 )
 
-# 그래프 표시
+
 fig.show()
 '''
 
 '''{python}
-# 기말고사1-(3)# | title: 속력별 경로 시각화
-# 속력을 quatile에 따라 4개의 구간으로 나누기
+#| title: 속력별 경로 시각화
 df_small['speed_category'] = pd.qcut(df_small['speed'], q=4, labels=['매우느림', '조금느림', '조금빠름', '매우빠름'])
 
-# Zoom 및 기타 설정
+
 zoom_level = 11
 
-# 대시보드 시각화
 fig = px.line_mapbox(
     data_frame=df_small,
     lat='dropoff_latitude',
@@ -128,7 +126,7 @@ fig = px.line_mapbox(
     height=600
 )
 
-# 산점도 추가
+
 scatter_data = px.scatter_mapbox(
     data_frame=df_small,
     lat='dropoff_latitude',
@@ -145,13 +143,13 @@ scatter_data = px.scatter_mapbox(
 for sd in scatter_data:
     fig.add_trace(sd)
 
-# 시각화 설정 업데이트
+
 fig.update_traces(
     line={'width': 1},
     opacity=0.8
 )
 
-# 그래프 표시
+
 fig.show(config={'scrollZoom': False})# 속력을 quatile에 따라 4개의 구간으로 나누기
 df_small['speed_category'] = pd.qcut(df_small['speed'], q=4, labels=['매우느림', '조금느림', '조금빠름', '매우빠름'])
 
