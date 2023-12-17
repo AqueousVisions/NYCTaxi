@@ -39,11 +39,11 @@ df = pd.read_csv("https://raw.githubusercontent.com/guebin/DV2023/main/posts/NYC
 df_small = df[::100].reset_index(drop=True)
 '''
 
-# 기말고사1-(1),(2)
+##| title: 요일,시간에 따른 평균속력 시각화 
 
 '''{python}
 
-#| title: 요일,시간에 따른 평균속력 시각화 
+
 dayofweek_mapping = {0: '월', 1: '화', 2: '수', 3: '목', 4: '금', 5: '토', 6: '일'}
 df['dayofweek'] = df['dayofweek'].map(dayofweek_mapping)
 
@@ -67,9 +67,9 @@ fig = px.density_heatmap(
 
 fig.show()
 '''
-
+##| title: 요일,시간에 따른 평균이동거리 시각화  
 '''{python}
-#| title: 요일,시간에 따른 평균이동거리 시각화  
+
 df = pd.read_csv("https://raw.githubusercontent.com/guebin/DV2023/main/posts/NYCTaxi.csv").assign(
     log_trip_duration=lambda df: np.log(df.trip_duration),
     pickup_datetime=lambda df: pd.to_datetime(df.pickup_datetime),
@@ -106,9 +106,9 @@ fig = px.density_heatmap(
 
 fig.show()
 '''
-
+##| title: 속력별 경로 시각화
 '''{python}
-#| title: 속력별 경로 시각화
+
 df_small['speed_category'] = pd.qcut(df_small['speed'], q=4, labels=['매우느림', '조금느림', '조금빠름', '매우빠름'])
 
 
